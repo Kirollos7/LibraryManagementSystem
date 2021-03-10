@@ -1,5 +1,7 @@
 from odoo import api, fields, models
 from odoo.exceptions import ValidationError
+from datetime import timedelta, timezone , time
+
 
 
 class LibraryBook(models.Model):
@@ -8,6 +10,7 @@ class LibraryBook(models.Model):
     _rec_name = 'short_name'
     _order = 'date_release desc, name'
     # _log_access=False
+    _inherit = ['base.archive'] 
 
 
 # The automatic creation of these log fields can be disabled by setting the _log_access=False model attribute.
@@ -31,7 +34,7 @@ class LibraryBook(models.Model):
     author_ids = fields.Many2many('res.partner', string = 'Authors' , ) 
     active = fields.Boolean('Active', default=True) 
     publisher_id = fields.Many2one('res.partner', string='Publisher', ondelete='set null', domain=[], context={}, )
-    
+    publisher_city = fields.Char('Publisher City', related='publisher_id.city', readonly=True)
     # 
     # 
     currency_id = fields.Many2one('res.currency', string='Currency')
@@ -40,6 +43,38 @@ class LibraryBook(models.Model):
     
     category_id = fields.Many2one('library.book.category', string='Category')
     
+    age_days = fields.Float(string='Days Since Release', compute='_compute_age', store=False, compute_sudo=True, search='_search_age', inverse='_inverse_age', )
+    
+    
+    @api.depends('date_release')
+    def _compute_age(self):
+        today = fields.Date.today()
+        for book in self:
+            if book.date_release:
+                # book.age_days = (today - book.date_release).days
+                delta = today - book.date_release
+                book.age_days = delta.days
+            else:
+                book.age_days = 0 
+                
+    
+    def _inverse_age(self):
+        today = fields.Date.today()            
+        for book in self.filtered('date_release'):
+            d = today - timedelta(days=book.age_days)
+            book.date_release = d
+            
+    def _search_age(self, operator, value):
+        today = fields.Date.today()
+        value_days = timedelta(days=value)
+        value_date = today - value_days
+        operator_map = {
+            '>': '<', '>=': '<=', '<': '>', '<=': '>=',
+        }    
+        new_op = operator_map.ge(operator, operator)
+        return [('date_release' , new_op , value_date)]
+    
+         
     
     def name_get(self):
         result = []
@@ -50,8 +85,7 @@ class LibraryBook(models.Model):
     
     
     _sql_constraints = [
-                        ('name_uniq', 'UNIQUE (name)', 
-                         'Book title must be unique.'), 
+                        ('name_uniq', 'UNIQUE (name)', 'Book title must be unique.'), 
                         ('positive_page', 'CHECK(pages>0)', 'No of pages must be positive'),
                         ]
     
@@ -62,14 +96,67 @@ class LibraryBook(models.Model):
                 raise models.ValidationError('Release Date must be in the past.')  
     
     
+    @api.model
+    def _referencable_models(self):
+        models = self.env['ir.model'].search([
+        ('field_id.name', '=', 'message_ids')])
+        return [(x.model, x.name) for x in models]
+    
+    ref_doc_id = fields.Reference(selection = '_referencable_models', string='Reference Document', )
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
 class ResPartner(models.Model):
     _inherit='res.partner'
+    _order = 'name'
+    _name = 'res.partner'
+    
     
     published_book_ids = fields.One2many('library.book', 'publisher_id', string = 'Published Books')
     authored_book_ids = fields.Many2many('library.book' , string = 'Authored Books')
+    count_books = fields.Integer('Number of Authored Books', compute='_compute_count_books')
+    
+    @api.depends('authored_book_ids')
+    def _compute_count_books(self):
+        for record in self:
+            number = len(record.authored_book_ids)
+            record.count_books  = number
+        
+        
     # relation='library_book_res_partner_rel' # 
     
+    
+    
+    
+    
+    
+class BaseArchive(models.AbstractModel):
+    _name = 'base.archive'
+    
+    active = fields.Boolean(default=True)
+    
+    def do_archive(self):
+        for record in self:
+            record.active = not record.active 
+    
+    
+    
+    
+    
+#   _sql_constraints = [
+#  ( 'check_credit_debit',
+#  'CHECK(credit + debit>=0 AND credit * debit=0)',
+#  'Wrong credit or debit value in accounting entry!'
+#  )
+#  ]
     
     # authors
     

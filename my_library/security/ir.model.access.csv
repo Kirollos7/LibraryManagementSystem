@@ -9,4 +9,8 @@ acl_book_librarian,library.book_librarian,model_library_book,group_librarian,1,1
 
 acl_book,library.book.category default,model_library_book_category,,1,1,1,1
 
+acl_book,library.book.copy default,model_library_book_copy,,1,1,1,1
+
+
+
 

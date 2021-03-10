@@ -32,6 +32,10 @@
                             <field name="reader_rating"  />
                             <field name="active" />
                             <field name="cost_price" />
+                            <field name="publisher_city" />
+                            <field name="age_days" />
+                        <field name="ref_doc_id" />
+
                         </group>
                     </group>
                     <notebook>
