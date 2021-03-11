@@ -11,5 +11,13 @@ class LibraryMember(models.Model):
     date_end = fields.Date('Termination Date')
     member_number = fields.Char()
     date_of_birth = fields.Date('Date of birth')
+    
+    
+    def log_all_library_members(self):
+        library_member_model = self.env['library.member']
+        all_member = library_member_model.search([])
+        print("All Members: ", all_member)
+        return True
+    
         
     

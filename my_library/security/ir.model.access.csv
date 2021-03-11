@@ -7,9 +7,13 @@ acl_book_librarian,library.book_librarian,model_library_book,group_librarian,1,1
 
 
 
-acl_book,library.book.category default,model_library_book_category,,1,1,1,1
+cat_book,library.book.category default,model_library_book_category,,1,1,1,1
 
-acl_book,library.book.copy default,model_library_book_copy,,1,1,1,1
+copy_book,library.book.copy default,model_library_book_copy,,1,1,1,1
+
+member_book,library.library.member default,model_library_member,,1,1,1,1
+
+
 
 
 

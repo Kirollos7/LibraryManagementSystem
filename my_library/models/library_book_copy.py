@@ -6,4 +6,4 @@ class LibraryBookCopy(models.Model):
     _inherit = 'library.book'
     _description = 'Library Book`s Copy'
     
-    
+    # test = fields.Char('What`s name')

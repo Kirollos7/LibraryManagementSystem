@@ -49,6 +49,6 @@
     </field>
 </record>
 
-<menuitem id="book_category_third_menu" name="Add Categories" sequence="1" action="library_book_category_action" parent = "library_book_main_menu"/>
+<menuitem id="book_category_third_menu" name="Categories" sequence="1" action="library_book_category_action" parent = "library_book_menu_root"/>
 
 </odoo>

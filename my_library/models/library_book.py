@@ -2,6 +2,9 @@ from odoo import api, fields, models
 from odoo.exceptions import ValidationError
 from datetime import timedelta, timezone , time
 
+from odoo.exceptions import UserError
+from  odoo.tools.translate import _
+
 
 
 class LibraryBook(models.Model):
@@ -16,8 +19,9 @@ class LibraryBook(models.Model):
 # The automatic creation of these log fields can be disabled by setting the _log_access=False model attribute.
     
     STATE = [
-        ('draft' , 'Not Available'),
+        ('draft' , 'Unavailable'),
         ('available' , 'Available'),
+        ('borrowed', 'Borrowed'),
         ('lost' , 'Lost'),
     ]
     name = fields.Char('Title' , required=True, )
@@ -74,6 +78,40 @@ class LibraryBook(models.Model):
         new_op = operator_map.ge(operator, operator)
         return [('date_release' , new_op , value_date)]
     
+    
+    @api.model
+    def is_allowed_transition(self, old_state, new_state):
+        allowed = [
+            ('draft', 'available'),
+            ('available', 'borrowed'),
+            ('borrowed', 'available'),
+            ('available', 'lost'),
+            ('borrowed', 'lost'),
+            ('lost', 'available')
+            ]
+        return (old_state, new_state) in allowed
+     
+     
+    def change_state(self, new_state):
+        for book in self:
+            if book.is_allowed_transition(book.state, new_state):
+                book.state = new_state
+            else:
+                msg = _('Moving from %s to %s is not allowed') %(book.state , new_state)
+                raise UserError(msg) 
+            
+    def make_available(self):
+        self.change_state('available')
+        
+    def make_borrowed(self):
+        self.change_state('borrowed')
+        
+    def make_lost(self):
+        self.change_state('lost')
+         
+
+    
+    
          
     
     def name_get(self):
@@ -112,42 +150,16 @@ class LibraryBook(models.Model):
     
     
     
+
     
-    
-class ResPartner(models.Model):
-    _inherit='res.partner'
-    _order = 'name'
-    _name = 'res.partner'
-    
-    
-    published_book_ids = fields.One2many('library.book', 'publisher_id', string = 'Published Books')
-    authored_book_ids = fields.Many2many('library.book' , string = 'Authored Books')
-    count_books = fields.Integer('Number of Authored Books', compute='_compute_count_books')
-    
-    @api.depends('authored_book_ids')
-    def _compute_count_books(self):
-        for record in self:
-            number = len(record.authored_book_ids)
-            record.count_books  = number
-        
-        
-    # relation='library_book_res_partner_rel' # 
-    
-    
-    
-    
-    
-    
-class BaseArchive(models.AbstractModel):
-    _name = 'base.archive'
-    
-    active = fields.Boolean(default=True)
-    
-    def do_archive(self):
-        for record in self:
-            record.active = not record.active 
-    
-    
+    # def post_to_webservice(self, data):
+    #     try:
+    #         req = requests.post('http://kirollos:8069', data=data, timeout=10)
+    #         content = req.json()
+    #     except IOError:
+    #         error_msg = _("Something went wrong during data submission")
+    #         raise UserError(error_msg)
+    #     return content
     
     
     

@@ -9,6 +9,13 @@
         <field name="model">library.book</field>
         <field name="arch" type="xml">
             <form string="Book Data">
+                <header>
+                    <button name='make_available' string='Avaliable' type='object'/>
+                    <button name='make_borrowed' string='Borrowed' type='object'/>
+                    <button name='make_lost' string='Lost' type='object'/>
+                    <field name="state" widget="statusbar"/>
+                   
+                </header>
                 <sheet>
                     <h1>
                         <field name="name" placeholder="Book Name"/>
@@ -17,7 +24,6 @@
                         <group>
                             <field name="author_ids" widget="many2many_tags" options="{'color_field': 'color', 'no_create_edit': True}" />
                             <field name="publisher_id" />
-                            <field name="state" widget="boolean_button"/>
                             <field name="pages" widget="integer"/>
                             <field name="notes" />
                             <field name="currency_id" />
@@ -95,7 +101,7 @@
     <!-- menu items -->
 
         <menuitem id="library_book_menu_root" name="Library" sequence="2"  />
-        <menuitem id="library_book_main_menu" name="Books" sequence="1" parent="library_book_menu_root" />
-        <menuitem id="library_book_sub_menu" name="Add Books" sequence="2" parent="library_book_main_menu" action="library_book_action"/>
+        <menuitem id="library_book_main_menu" name="Books" sequence="2" parent="library_book_menu_root" action="library_book_action"/>
+        <!-- <menuitem id="library_book_sub_menu" name="Add Books" sequence="2" parent="library_book_main_menu" action="library_book_action"/> -->
 
 </odoo>

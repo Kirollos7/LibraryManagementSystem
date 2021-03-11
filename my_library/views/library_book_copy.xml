@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<record id="book_copy_view_form" model="ir.ui.view">
+    <field name="name">Library Book Copy Form</field>
+    <field name="model">library.book.copy</field>
+    <field name="inherit_id" ref="my_library.library_bookview_form" />
+    <!-- <field name="arch" type="xml"> -->
+        <!-- <xpath expr="//field[@name='name']" position="after">
+            <field name="test" />
+        </xpath> -->
+    <!-- </field> -->
+</record>
+
+
+
+    <record id="library_book_copy_action" model="ir.actions.act_window">
+        <field name="name">Library Book Copy</field>
+        <field name="res_model">library.book.copy</field>
+        <field name="view_mode">tree,form</field>
+        <!-- <field name="domain">[]</field> -->
+        <!-- <field name="context">{}</field> -->
+        <field name="help" type="html">
+            <p class='o_view_nocontent_smiling_face'>Create The First Book Copy</p>
+        </field>
+    </record>
+
+
+<menuitem
+    id="library_book_copy_submenu"
+    name="Books Copy"
+    action="library_book_copy_action"
+    parent="library_book_menu_root"
+    sequence="4"/>
+
+
+</odoo>
