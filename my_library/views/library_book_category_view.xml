@@ -1,20 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 <!-- Form View -->
+<!-- ir.ui.view -->
+<!-- ir.ui.view -->
+   
+
+    </record>
     <record id="book_category_form" model="ir.ui.view">
         <field name="name">Book Category Form</field>
         <field name="model">library.book.category</field>
         <field name="arch" type="xml">
             <form string="Add Category">
+                <header>
+                    <button name="create_categories" string="Create Categories" type="object"/>
+                
+                    <!-- <button name='a' string='Apple' type='object'/> -->
+                    <button name='make_b' string='Bin' type='object'/>
+                    <button name='make_c' string='Car' type='object'/>
+                    <button name='make_d' string='Delete' type='object'/>
+                    <button name='make_e' string='Enter' type='object'/>
+                    <button name='make_f' string='Format' type='object'/>
+                    <field name="choice"  widget="statusbar"/>
+                </header>
+                
                 <sheet>
                     <group>
                         <group>
                             <field name="name" />
                             <field name="parent_id" />
+                            <field name="currency_id" />
+                            <field name="price" />
+
                         </group>
                         <group>
                             <field name="child_ids" widget="one2many_list"/>
-                            <field name="parent_path" />
+                            <field name="description" />
+                            <field name="title" />
+                            <field name="date" />
+                            <field name="k" />
+                            <field name="cost" />
                         </group>    
                     </group>
                 </sheet>
@@ -31,7 +55,7 @@
         <tree>
             <field name="name" />
             <field name="parent_id" />
-            <field name="parent_path" />
+            <field name="description" />
         </tree>
     </field>
 </record>

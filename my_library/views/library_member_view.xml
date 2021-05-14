@@ -13,6 +13,7 @@
                 </header> -->
                 <xpath expr="//field[@name='work_phone']" position="after">
                     <field name="date_start" />
+                    <field name="partner_id" />
                     <!-- <field name="date_end" /> -->
                     <!-- <field name="member_number" /> -->
                     <!-- <field name="date_of_birth" /> -->
@@ -50,5 +51,5 @@
         name="Members"
         action="library_member_action"
         parent="library_book_menu_root"
-        sequence="3"/>
+        />
 </odoo>

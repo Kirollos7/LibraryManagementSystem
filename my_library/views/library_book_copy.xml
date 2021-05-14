@@ -12,6 +12,16 @@
     <!-- </field> -->
 </record>
 
+<!-- 
+<record id="book_copy_view_tree" model="ir.ui.view">
+    <field name="name">Library Book Copy Tree</field>
+    <field name="model">library.book.copy</field>
+    <field name="inherit_id" ref="my_library.library_bookview_form" />
+</record> -->
+
+
+
+
 
 
     <record id="library_book_copy_action" model="ir.actions.act_window">

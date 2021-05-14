@@ -1,0 +1,57 @@
+<odoo>
+    <record id="stu_data_view_form" model="ir.ui.view">
+      <field name="name">stu.data.view.form</field>
+      <field name="model">stu.data</field>
+      <field name="arch" type="xml">
+        <form string="all">
+          <sheet>
+            <group>
+              <field name="name" />
+              <field name="age" />
+              <field name="email" />
+              <field name="phone" />
+              <field name="street" />
+              <field name="street2" />
+              <field name="area" />
+              <field name="city" />
+              <field name="country" />
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+
+
+  <record id="stu_data_tree" model="ir.ui.view">
+    <field name="name">stu.data.tree</field>
+    <field name="model">stu.data</field>
+    <field name="arch" type="xml">
+      <tree string="display">
+          <field name="name" />
+          <field name="age" />
+              <field name="area" />
+      </tree>
+    </field>
+  </record>
+
+    <record id="stu_data_action" model="ir.actions.act_window">
+      <field name="name">Student Info</field>
+      <field name="res_model">stu.data</field>
+      <field name="view_mode">tree,form</field>
+      <!-- <field name="domain">[]</field> -->
+      <!-- <field name="context">{}</field> -->
+    </record>
+
+    <menuitem
+      id="stu_data_menu"
+      name="student"
+      sequence="10"/>
+
+    <menuitem
+      id="stu_data_sub_menu"
+      name="Add"
+      action="stu_data_action"
+      parent="stu_data_menu"
+      sequence="1"/>
+</odoo>

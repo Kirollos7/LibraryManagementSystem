@@ -48,7 +48,7 @@ class LibraryBook(models.Model):
     category_id = fields.Many2one('library.book.category', string='Category')
     
     age_days = fields.Float(string='Days Since Release', compute='_compute_age', store=False, compute_sudo=True, search='_search_age', inverse='_inverse_age', )
-    
+   
     
     @api.depends('date_release')
     def _compute_age(self):
@@ -61,6 +61,19 @@ class LibraryBook(models.Model):
             else:
                 book.age_days = 0 
                 
+    @api.model
+    def books_with_multiple_authors(self, all_authors):
+        def predicate(book):
+            if len(book.author_ids) > 1:
+                return True
+            return False
+        return all_books.filter(predicate)
+            
+            
+            
+            
+            
+            
     
     def _inverse_age(self):
         today = fields.Date.today()            
@@ -79,19 +92,61 @@ class LibraryBook(models.Model):
         return [('date_release' , new_op , value_date)]
     
     
+    
+    
+    
+    # @api.model
+    # def is_allowed_transition(self, old_state, new_state):
+    #     allowed = [
+    #         ('draft', 'available'),
+    #         ('available', 'borrowed'),
+    #         ('borrowed', 'available'),
+    #         ('available', 'lost'),
+    #         ('borrowed', 'lost'),
+    #         ('lost', 'available')
+    #         ]
+    #     return (old_state, new_state) in allowed
+
     @api.model
     def is_allowed_transition(self, old_state, new_state):
-        allowed = [
-            ('draft', 'available'),
-            ('available', 'borrowed'),
-            ('borrowed', 'available'),
-            ('available', 'lost'),
-            ('borrowed', 'lost'),
-            ('lost', 'available')
-            ]
+        allowed =[
+            ('draft','available'),
+            ('available','borrowed'),
+            ('borrowed','available'),
+            ('available','lost'),
+            ('lost','available'),
+        ]
         return (old_state, new_state) in allowed
-     
-     
+
+    
+    #   arbitrary number
+    # def post_to_webservice(self, data):
+    #     try:
+    #         req = requests.post('http://my-test-service.com', data=data, timeout=10)
+    #         content = req.json()
+    #     except IOError:
+    #         error_msg = _("Something went wrong during data submission")
+    #         raise UserError(error_msg)
+    #     return content
+    # 
+
+
+        # Get Empty Recordset from Library Members Model
+        #   
+    def log_all_library_members(self):
+        # This is an empty recordset of model library. member
+        library_members_model = self.env['library.member']
+        
+        all_members = library_members_model.search([])
+        print("All Members : " , all_members)
+        return True
+
+    
+
+
+
+
+
     def change_state(self, new_state):
         for book in self:
             if book.is_allowed_transition(book.state, new_state):
@@ -108,9 +163,31 @@ class LibraryBook(models.Model):
         
     def make_lost(self):
         self.change_state('lost')
+        
+        
+        
+    def change_release_date(self):
+        self.ensure_one()
+        self.date_release = fields.Date.today()
          
 
+    def find_book(self):
+        domain = [
+            '|' , '&' , ('name' , 'ilike' , 'Book Name'),
+            ('category_id.name', 'ilike', 'Category Name'),
+            '&', ('name', 'ilike', 'Book Name 2'),
+            ('category_id.name', 'ilike', 'Category Name 2')
+        ]
+        books = self.search(domain)
+        # for i in books:
+        #     print(i)
+        
     
+  
+ 
+
+
+        
     
          
     
